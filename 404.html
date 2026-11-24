@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Académie Esthétique Occitanie · Demande d'informations</title>
+<meta name="description" content="Rehaussement de cils, Hydraskin, blanchiment dentaire esthétique : demandez les informations sur nos formations en moins d'une minute.">
+<meta name="theme-color" content="#FBF6F4">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Académie Esthétique Occitanie · Nos formations">
+<meta property="og:description" content="Demandez les informations sur nos formations esthétiques en moins d'une minute.">
+<meta property="og:url" content="https://aeo-formation.pages.dev/">
+<meta property="og:image" content="https://aeo-formation.pages.dev/images/apercu.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="images/icone.png">
+<link rel="apple-touch-icon" href="images/icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fond: #FBF6F4;
+    --carte: #FFFFFF;
+    --bordeaux: #6A1E2C;
+    --bordeaux-fonce: #4E1520;
+    --or: #B8964A;
+    --rose: #D8C3C5;
+    --rose-clair: #F2E7E7;
+    --texte: #3A2228;
+    --doux: #7D6569;
+    --erreur: #B3261E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--fond);
+    color: var(--texte);
+    font-family: "Montserrat", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  /* Barre de progression */
+  .progression { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: var(--rose-clair); z-index: 10; }
+  .progression span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--bordeaux), var(--or)); transition: width .45s ease; }
+  .haut {
+    position: fixed; top: 4px; left: 0; right: 0; z-index: 9;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; pointer-events: none;
+  }
+  .retour {
+    pointer-events: auto; border: 0; background: transparent; color: var(--bordeaux);
+    font: 500 14px "Montserrat", sans-serif; display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 10px; border-radius: 999px; cursor: pointer; opacity: 0; visibility: hidden; transition: opacity .3s;
+  }
+  .retour.visible { opacity: 1; visibility: visible; }
+  .retour:hover { background: var(--rose-clair); }
+  .compteur { font-size: 13px; color: var(--doux); letter-spacing: .04em; opacity: 0; transition: opacity .3s; }
+  .compteur.visible { opacity: 1; }
+
+  /* Écrans */
+  main { position: relative; min-height: 100vh; min-height: 100dvh; }
+  .etape {
+    position: absolute; inset: 0; min-height: 100vh; min-height: 100dvh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 72px 16px 40px; max-width: 640px; margin: 0 auto;
+    opacity: 0; visibility: hidden; transform: translateY(24px);
+    transition: opacity .45s ease, transform .45s ease, visibility 0s linear .45s;
+  }
+  .etape.active { opacity: 1; visibility: visible; transform: none; transition: opacity .45s ease, transform .45s ease, visibility 0s; }
+  .etape.sortie-haut { transform: translateY(-24px); }
+
+  /* Accueil */
+  .accueil { text-align: center; align-items: center; }
+  .accueil img { width: min(300px, 78vw); height: auto; margin-bottom: 20px; }
+  .surtitre { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--or); margin-bottom: 10px; }
+  h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 600; color: var(--bordeaux); font-size: clamp(28px, 7vw, 40px); line-height: 1.15; margin-bottom: 14px; }
+  .intro { color: var(--doux); max-width: 440px; margin: 0 auto 28px; }
+  .duree { font-size: 13px; color: var(--doux); margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; }
+
+  /* Questions */
+  .numero { font-size: 13px; font-weight: 600; color: var(--or); letter-spacing: .08em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .numero::after { content: ""; width: 28px; height: 1px; background: var(--or); }
+  .question { font-family: "Playfair Display", Georgia, serif; font-weight: 500; color: var(--bordeaux); font-size: clamp(24px, 6vw, 34px); line-height: 1.2; margin-bottom: 8px; display: block; }
+  .aide { color: var(--doux); font-size: 14px; margin-bottom: 26px; }
+  .champ {
+    width: 100%; border: 0; border-bottom: 2px solid var(--rose); background: transparent;
+    font: 500 20px "Montserrat", sans-serif; color: var(--texte); padding: 10px 2px; outline: none; border-radius: 0;
+    transition: border-color .25s;
+  }
+  .champ::placeholder { color: #BFAEB0; font-weight: 400; }
+  .champ:focus { border-bottom-color: var(--bordeaux); }
+  .champ.invalide { border-bottom-color: var(--erreur); }
+  .message-erreur { color: var(--erreur); font-size: 14px; min-height: 22px; margin-top: 10px; }
+
+  /* Choix (cases à cocher) */
+  .choix { display: grid; gap: 12px; }
+  .option {
+    position: relative; display: flex; align-items: center; gap: 14px;
+    background: var(--carte); border: 1.5px solid var(--rose); border-radius: 14px;
+    padding: 16px 16px; cursor: pointer; transition: border-color .2s, background .2s, transform .15s;
+    font-weight: 500; -webkit-tap-highlight-color: transparent;
+  }
+  .option:hover { border-color: var(--bordeaux); }
+  .option:active { transform: scale(.99); }
+  .option input { position: absolute; opacity: 0; pointer-events: none; }
+  .lettre {
+    flex: none; width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--rose);
+    display: grid; place-items: center; font-size: 12px; font-weight: 600; color: var(--bordeaux); background: var(--fond);
+    transition: all .2s;
+  }
+  .option .coche { margin-left: auto; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--rose); display: grid; place-items: center; transition: all .2s; flex: none; }
+  .option .coche svg { width: 12px; height: 12px; opacity: 0; transition: opacity .2s; }
+  .option:has(input:checked) { border-color: var(--bordeaux); background: #FCF4F4; }
+  .option:has(input:checked) .lettre { background: var(--bordeaux); color: #fff; border-color: var(--bordeaux); }
+  .option:has(input:checked) .coche { background: var(--bordeaux); border-color: var(--bordeaux); }
+  .option:has(input:checked) .coche svg { opacity: 1; }
+  .option:has(input:focus-visible) { outline: 2px solid var(--or); outline-offset: 2px; }
+  .option.consentement { align-items: flex-start; font-weight: 400; line-height: 1.45; }
+  .option.consentement .coche { margin: 2px 0 0 0; border-radius: 6px; }
+  .mention { font-size: 12.5px; color: var(--doux); margin-top: 14px; }
+
+  /* Boutons */
+  .actions { display: flex; align-items: center; gap: 14px; margin-top: 24px; flex-wrap: wrap; }
+  .bouton {
+    border: 0; cursor: pointer; background: var(--bordeaux); color: #fff;
+    font: 600 15px "Montserrat", sans-serif; letter-spacing: .03em;
+    padding: 15px 28px; border-radius: 999px; display: inline-flex; align-items: center; gap: 10px;
+    box-shadow: 0 6px 18px rgba(106, 30, 44, .18); transition: background .2s, transform .15s, box-shadow .2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bouton:hover { background: var(--bordeaux-fonce); box-shadow: 0 8px 22px rgba(106, 30, 44, .24); }
+  .bouton:active { transform: scale(.98); }
+  .bouton:focus-visible { outline: 2px solid var(--or); outline-offset: 3px; }
+  .bouton[disabled] { opacity: .7; cursor: wait; }
+  .astuce { font-size: 12.5px; color: var(--doux); }
+  .astuce kbd { font-family: inherit; font-weight: 600; }
+  @media (hover: none) { .astuce { display: none; } }
+  .tourne { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: tourne .8s linear infinite; display: none; }
+  .bouton.envoi .tourne { display: inline-block; }
+  @keyframes tourne { to { transform: rotate(360deg); } }
+
+  /* Fin */
+  .fin { text-align: center; align-items: center; }
+  .fin img { width: min(200px, 56vw); margin-bottom: 18px; }
+  .medaille { width: 64px; height: 64px; border-radius: 50%; background: var(--bordeaux); display: grid; place-items: center; margin: 0 auto 20px; box-shadow: 0 10px 26px rgba(106,30,44,.22); }
+  .medaille svg { width: 28px; height: 28px; }
+  .fin .surtitre { color: var(--or); }
+  .fin p { color: var(--doux); max-width: 420px; margin: 0 auto 10px; }
+  .lien { color: var(--bordeaux); font-weight: 600; }
+
+  .piege { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  @media (min-width: 700px) {
+    .etape { padding-left: 24px; padding-right: 24px; }
+    .champ { font-size: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .etape, .progression span { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progression" aria-hidden="true"><span id="barre"></span></div>
+<div class="haut">
+  <button class="retour" id="retour" type="button" aria-label="Question précédente">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    Retour
+  </button>
+  <span class="compteur" id="compteur" aria-live="polite"></span>
+</div>
+
+<main>
+<form id="formulaire" novalidate autocomplete="on">
+  <input class="piege" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+  <!-- Accueil -->
+  <section class="etape accueil active" data-etape="0">
+    <img src="images/logo.png" alt="Académie Esthétique Occitanie" width="640" height="532">
+    <p class="surtitre">Formations esthétiques</p>
+    <h1>Demande d'informations</h1>
+    <p class="intro">Merci de compléter ce formulaire afin que nous puissions vous recontacter et vous transmettre les informations relatives à nos formations.</p>
+    <div><button class="bouton" type="button" data-suivant>Commencer
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button></div>
+    <span class="duree">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Moins d'une minute
+    </span>
+  </section>
+
+  <!-- 1. Nom -->
+  <section class="etape" data-etape="1">
+    <p class="numero">1</p>
+    <label class="question" for="nom">Quel est votre nom et prénom&nbsp;?</label>
+    <p class="aide">Pour savoir comment nous adresser à vous.</p>
+    <input class="champ" id="nom" name="nom" type="text" autocomplete="name" autocapitalize="words" placeholder="Ex. Marie Dupont" required>
+    <p class="message-erreur" role="alert"></p>
+    <div class="actions"><button class="bouton" type="button" data-suivant>OK</button><span class="astuce">ou appuyez sur <kbd>Entrée ↵</kbd></span></div>
+  </section>
+
+  <!-- 2. Email -->
+  <section class="etape" data-etape="2">
+    <p class="numero">2</p>
+    <label class="question" for="email">Votre adresse e-mail</label>
+    <p class="aide">Nous vous y enverrons les informations sur la formation.</p>
+    <input class="champ" id="email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nom@exemple.fr" required>
+    <p class="message-erreur" role="alert"></p>
+    <div class="actions"><button class="bouton" type="button" data-suivant>OK</button><span class="astuce">ou appuyez sur <kbd>Entrée ↵</kbd></span></div>
+  </section>
+
+  <!-- 3. Téléphone -->
+  <section class="etape" data-etape="3">
+    <p class="numero">3</p>
+    <label class="question" for="telephone">Votre numéro de téléphone</label>
+    <p class="aide">Pour échanger de vive voix sur votre projet.</p>
+    <input class="champ" id="telephone" name="telephone" type="tel" inputmode="tel" autocomplete="tel" placeholder="06 12 34 56 78" required>
+    <p class="message-erreur" role="alert"></p>
+    <div class="actions"><button class="bouton" type="button" data-suivant>OK</button><span class="astuce">ou appuyez sur <kbd>Entrée ↵</kbd></span></div>
+  </section>
+
+  <!-- 4. Ville -->
+  <section class="etape" data-etape="4">
+    <p class="numero">4</p>
+    <label class="question" for="ville">Dans quelle ville habitez-vous&nbsp;?</label>
+    <p class="aide">&nbsp;</p>
+    <input class="champ" id="ville" name="ville" type="text" autocomplete="address-level2" autocapitalize="words" placeholder="Ex. Toulouse" required>
+    <p class="message-erreur" role="alert"></p>
+    <div class="actions"><button class="bouton" type="button" data-suivant>OK</button><span class="astuce">ou appuyez sur <kbd>Entrée ↵</kbd></span></div>
+  </section>
+
+  <!-- 5. Formations -->
+  <section class="etape" data-etape="5">
+    <p class="numero">5</p>
+    <p class="question" id="q-formation">Quelle formation vous intéresse&nbsp;?</p>
+    <p class="aide">Plusieurs choix possibles.</p>
+    <div class="choix" role="group" aria-labelledby="q-formation">
+      <label class="option"><input type="checkbox" name="formation" value="Rehaussement de cils"><span class="lettre">A</span>Rehaussement de cils<span class="coche"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></label>
+      <label class="option"><input type="checkbox" name="formation" value="Hydraskin"><span class="lettre">B</span>Hydraskin<span class="coche"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></label>
+      <label class="option"><input type="checkbox" name="formation" value="Blanchiment dentaire esthétique"><span class="lettre">C</span>Blanchiment dentaire esthétique<span class="coche"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></label>
+    </div>
+    <p class="message-erreur" role="alert"></p>
+    <div class="actions"><button class="bouton" type="button" data-suivant>OK</button><span class="astuce">ou appuyez sur <kbd>Entrée ↵</kbd></span></div>
+  </section>
+
+  <!-- 6. Consentement + envoi -->
+  <section class="etape" data-etape="6">
+    <p class="numero">6</p>
+    <p class="question">Dernière étape</p>
+    <p class="aide">Votre accord pour être recontacté(e).</p>
+    <label class="option consentement"><input type="checkbox" id="consentement" name="consentement"><span class="coche"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>J'accepte d'être contacté(e) par téléphone et/ou par e-mail concernant ma demande d'informations.</label>
+    <p class="mention">Les informations recueillies sont utilisées uniquement pour répondre à votre demande. Elles ne sont pas destinées à être revendues.</p>
+    <p class="message-erreur" role="alert"></p>
+    <div class="actions"><button class="bouton" type="submit" id="envoyer"><span class="tourne" aria-hidden="true"></span><span class="texte">Envoyer ma demande</span></button></div>
+  </section>
+
+  <!-- Merci -->
+  <section class="etape fin" data-etape="merci">
+    <div class="medaille"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div>
+    <p class="surtitre">Demande envoyée</p>
+    <h1>Merci&nbsp;!</h1>
+    <p>Nous vous recontactons rapidement pour échanger sur votre projet de formation.</p>
+    <p>Un e-mail de confirmation vient de vous être envoyé.</p>
+  </section>
+
+  <!-- Erreur d'envoi -->
+  <section class="etape fin" data-etape="erreur">
+    <p class="surtitre">Oups</p>
+    <h1>L'envoi n'a pas abouti</h1>
+    <p>Vérifiez votre connexion puis réessayez. Vos réponses sont conservées.</p>
+    <div class="actions" style="justify-content:center"><button class="bouton" type="button" id="reessayer">Réessayer</button></div>
+    <p style="margin-top:18px">Ou écrivez-nous directement : <a class="lien" id="lien-mail" href="#">par e-mail</a></p>
+  </section>
+</form>
+</main>
+
+<script>
+(() => {
+  // Adresse de réception des réponses (service gratuit FormSubmit)
+  const ADRESSE = "aeoccitanie.contact@gmail.com";
+  const ENVOI = "https://formsubmit.co/ajax/" + ADRESSE;
+  const MODE_TEST = new URLSearchParams(location.search).has("test"); // ?test : n'envoie rien
+
+  const form = document.getElementById("formulaire");
+  const etapes = [...document.querySelectorAll(".etape")];
+  const questions = etapes.filter(e => /^\d+$/.test(e.dataset.etape) && e.dataset.etape !== "0");
+  const total = questions.length;
+  const barre = document.getElementById("barre");
+  const compteur = document.getElementById("compteur");
+  const retour = document.getElementById("retour");
+  let courante = etapes[0];
+
+  function afficher(cible, versLeHaut = true) {
+    if (cible === courante) return;
+    courante.classList.remove("active");
+    courante.classList.toggle("sortie-haut", versLeHaut);
+    cible.classList.remove("sortie-haut");
+    cible.classList.add("active");
+    courante.setAttribute("aria-hidden", "true");
+    cible.removeAttribute("aria-hidden");
+    courante = cible;
+
+    const n = Number(cible.dataset.etape);
+    const estQuestion = Number.isInteger(n) && n > 0;
+    const fini = cible.dataset.etape === "merci";
+    barre.style.width = fini ? "100%" : estQuestion ? ((n - 1) / total * 100) + "%" : "0%";
+    compteur.textContent = estQuestion ? n + " / " + total : "";
+    compteur.classList.toggle("visible", estQuestion);
+    retour.classList.toggle("visible", estQuestion);
+    window.scrollTo(0, 0);
+
+    const champ = cible.querySelector(".champ");
+    if (champ) setTimeout(() => champ.focus({ preventScroll: true }), 350);
+  }
+
+  function erreur(etape, texte) {
+    const zone = etape.querySelector(".message-erreur");
+    if (zone) zone.textContent = texte || "";
+    const champ = etape.querySelector(".champ");
+    if (champ) champ.classList.toggle("invalide", !!texte);
+    return !texte;
+  }
+
+  function valider(etape) {
+    switch (etape.dataset.etape) {
+      case "1": {
+        const v = form.nom.value.trim();
+        return erreur(etape, v.length < 3 || !v.includes(" ") ? "Merci d'indiquer votre nom et votre prénom." : "");
+      }
+      case "2": {
+        const v = form.email.value.trim();
+        return erreur(etape, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? "" : "Cette adresse e-mail ne semble pas valide.");
+      }
+      case "3": {
+        const chiffres = form.telephone.value.replace(/\D/g, "");
+        return erreur(etape, chiffres.length >= 9 && chiffres.length <= 15 ? "" : "Merci d'indiquer un numéro valide (ex. 06 12 34 56 78).");
+      }
+      case "4":
+        return erreur(etape, form.ville.value.trim().length >= 2 ? "" : "Merci d'indiquer votre ville.");
+      case "5":
+        return erreur(etape, form.querySelectorAll('input[name="formation"]:checked').length ? "" : "Choisissez au moins une formation.");
+      case "6":
+        return erreur(etape, form.consentement.checked ? "" : "Votre accord est nécessaire pour que nous puissions vous recontacter.");
+    }
+    return true;
+  }
+
+  function suivant() {
+    if (!valider(courante)) return;
+    const i = etapes.indexOf(courante);
+    const prochaine = etapes[i + 1];
+    if (prochaine && /^\d+$/.test(prochaine.dataset.etape)) afficher(prochaine, true);
+  }
+
+  function precedent() {
+    const n = Number(courante.dataset.etape);
+    if (n > 0) afficher(etapes.find(e => e.dataset.etape === String(n - 1)), false);
+  }
+
+  form.addEventListener("click", e => { if (e.target.closest("[data-suivant]")) suivant(); });
+  retour.addEventListener("click", precedent);
+
+  // Effacer le message d'erreur dès qu'on corrige
+  form.addEventListener("input", e => {
+    const etape = e.target.closest(".etape");
+    if (etape) erreur(etape, "");
+  });
+
+  // Clavier : Entrée = suivant, A/B/C = cocher une formation
+  document.addEventListener("keydown", e => {
+    const n = courante.dataset.etape;
+    if (e.key === "Enter" && !e.shiftKey) {
+      if (n === "6") return; // l'envoi se fait par le formulaire
+      if (/^[0-5]$/.test(n)) { e.preventDefault(); suivant(); }
+    }
+    if (n === "5" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const idx = "abc".indexOf(e.key.toLowerCase());
+      if (idx >= 0) { const c = form.querySelectorAll('input[name="formation"]')[idx]; c.checked = !c.checked; erreur(courante, ""); }
+    }
+  });
+
+  function reponses() {
+    const formations = [...form.querySelectorAll('input[name="formation"]:checked')].map(c => c.value);
+    return {
+      nom: form.nom.value.trim(),
+      email: form.email.value.trim(),
+      telephone: form.telephone.value.trim(),
+      ville: form.ville.value.trim(),
+      formations
+    };
+  }
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (courante.dataset.etape !== "6") return;
+    if (!valider(courante)) return;
+    if (form._honey.value) return; // robot
+
+    const r = reponses();
+    const donnees = {
+      "Nom et prénom": r.nom,
+      "email": r.email,
+      "Téléphone": r.telephone,
+      "Ville": r.ville,
+      "Formation(s)": r.formations.join(", "),
+      "Accord pour être contacté(e)": "Oui",
+      "_subject": "Nouvelle demande d'informations · " + r.formations.join(" + ") + " · " + r.nom,
+      "_template": "table",
+      "_captcha": "false",
+      "_autoresponse":
+        "Bonjour,\n\nMerci pour votre demande d'informations concernant notre formation : " + r.formations.join(", ") +
+        ".\n\nNous vous recontactons rapidement pour échanger sur votre projet de formation.\n\nÀ très bientôt,\nL'Académie Esthétique Occitanie"
+    };
+
+    const bouton = document.getElementById("envoyer");
+    bouton.disabled = true; bouton.classList.add("envoi");
+    bouton.querySelector(".texte").textContent = "Envoi en cours…";
+
+    try {
+      let ok;
+      if (MODE_TEST) {
+        console.log("[TEST] Réponses qui seraient envoyées :", donnees);
+        await new Promise(res => setTimeout(res, 800));
+        ok = !new URLSearchParams(location.search).has("echec");
+      } else {
+        const rep = await fetch(ENVOI, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(donnees)
+        });
+        const json = await rep.json().catch(() => ({}));
+        ok = rep.ok && String(json.success) === "true";
+        if (!ok) console.warn("Envoi refusé :", json.message || rep.status);
+      }
+      afficher(etapes.find(x => x.dataset.etape === (ok ? "merci" : "erreur")));
+      if (!ok) preparerMail(r);
+    } catch (err) {
+      afficher(etapes.find(x => x.dataset.etape === "erreur"));
+      preparerMail(r);
+    } finally {
+      bouton.disabled = false; bouton.classList.remove("envoi");
+      bouton.querySelector(".texte").textContent = "Envoyer ma demande";
+    }
+  });
+
+  function preparerMail(r) {
+    const corps = "Bonjour,\n\nJe souhaite recevoir des informations sur : " + r.formations.join(", ") +
+      ".\n\nNom et prénom : " + r.nom + "\nE-mail : " + r.email + "\nTéléphone : " + r.telephone + "\nVille : " + r.ville +
+      "\n\nJ'accepte d'être contacté(e) par téléphone et/ou par e-mail concernant ma demande.";
+    document.getElementById("lien-mail").href = "mailto:" + ADRESSE +
+      "?subject=" + encodeURIComponent("Demande d'informations · formations") + "&body=" + encodeURIComponent(corps);
+  }
+
+  document.getElementById("reessayer").addEventListener("click", () => {
+    afficher(etapes.find(x => x.dataset.etape === "6"), false);
+  });
+
+  etapes.forEach(e => { if (!e.classList.contains("active")) e.setAttribute("aria-hidden", "true"); });
+})();
+</script>
+</body>
+</html>
